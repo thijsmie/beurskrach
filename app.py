@@ -9,6 +9,9 @@ from paths import TEMPLATE_FOLDER, STATIC_FOLDER
 app = Flask(__name__, template_folder=TEMPLATE_FOLDER, static_folder=STATIC_FOLDER)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 db = SQLAlchemy(app)
+
+
+
 Bootstrap(app)
 
 auth = LoginManager(app)
@@ -113,6 +116,10 @@ class PriceHistory(db.Model):
     
     timestep = db.Column(db.Integer)
     value = db.Column(db.Integer)
+    
+    
+db.create_all()
+db.session.commit()
     
 
 def do_timestep():
@@ -258,9 +265,9 @@ def index():
    
 @app.route('/login')
 def login():
-    if do_login(request.form.username, request.form.password):
+    if do_login(request.form.get('username'), request.form.get('password')):
         return redirect(url_for('index'))
-    return render_template('login.html')
+    return render_template('do_login.html')
 
 @app.route('/logout')
 @login_required
