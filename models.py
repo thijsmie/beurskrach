@@ -8,9 +8,6 @@ class User(db.Model):
     
     username = db.Column(db.String(80), unique=True)
     points = db.Column(db.Integer)
-    
-    def __init__(self):
-        self.points = 0
         
         
 class Product(db.Model):

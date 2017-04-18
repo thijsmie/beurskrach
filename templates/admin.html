@@ -1,21 +1,78 @@
 {% extends 'base.html' %}
 
+{% macro format_currency(input) -%}
+{{ "€{:.2f}".format(input / 100.0) }}
+{%- endmacro %}
+
 {% block container %}
-    {% for user in users %}
+    <div class="row">
+    <h2> Users </h2>
+    {% for user in users %}       
         <div class="col-md-4">
         <div class="panel panel-default">
-            <div class="panel-heading">{{ user.username }}</div>
+            <div class="panel-heading"><font size="5"><b>{{ user.username }}</b></font><font size="5"><span style="float: right;"> {{ format_currency(user.points) }}</span></font></div>
             <div class="panel-body">
                 {% for product in products %}
                 <div class="btn-group">
                   <a href="#" class="btn btn-default">{{ product.name }}</a>
-                  <a href="#" class="btn btn-success">+</a>
-                  <a href="#" class="btn btn-danger">-</a>
+                  <a href="/sell/{{user.id}}/{{product.id}}/{{key}}" class="btn btn-success">+</a>
+                  <a href="/buy/{{user.id}}/{{product.id}}/{{key}}" class="btn btn-danger">-</a>
                 </div>
                 {% endfor %}
             </div>
         </div>
         </div>
     {% endfor %}
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading"><font size="5"><b>New User</b></font></div>
+                <div class="panel-body">
+                    <form action="/adduser/{{ key }}" method="POST" >
+                    <input class="form-control" type="text" name="username" placeholder="Username" />
+                    <button class="btn btn-default">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+    <h2> Products </h2>
+    {% for product in products %}
+        <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading"><font size="5"><b>{{ product.name }}</b></font></div>
+            <div class="panel-body">
+                Current value: {{ format_currency(product.current_value) }}<br>
+                In circulation: {{ product.in_circulation }}<br>
+                Sold (Total): {{ product.total_sold }}<br>
         
+                <h4> Private </h4>
+                Crash potential: {{ "{:.1f}%".format(product.crash_potential*100) }}
+                <div class="btn-group btn-group-xs">
+                  <a href="/manipulate/crash/up/{{product.id}}/{{key}}" class="btn btn-success">+</a>
+                  <a href="/manipulate/crash/down/{{product.id}}/{{key}}" class="btn btn-danger">-</a>
+                  <a href="/manipulate/crash/garantueed/{{product.id}}/{{key}}" class="btn btn-warning">!!!</a>
+                </div><br>
+                Manipulating trend: {{ product.global_trend }}
+                <div class="btn-group btn-group-xs">
+                  <a href="/manipulate/value/{{product.id}}/10/{{key}}" class="btn btn-success">5+</a>
+                  <a href="/manipulate/value/{{product.id}}/6/{{key}}" class="btn btn-success">1+</a>
+                  <a href="/manipulate/value/{{product.id}}/4/{{key}}" class="btn btn-danger">1-</a>
+                  <a href="/manipulate/value/{{product.id}}/0/{{key}}" class="btn btn-danger">5-</a>
+                </div><br>
+                Sold since last step: {{ product.sell_amount }}
+                <div class="btn-group btn-group-xs">
+                  <a href="/manipulate/sell/up/{{product.id}}/{{key}}" class="btn btn-success">5+</a>
+                  <a href="/manipulate/sell/down/{{product.id}}/{{key}}" class="btn btn-danger">5-</a>
+                </div><br>
+                Bought since last step: {{ product.buy_amount }}
+                <div class="btn-group btn-group-xs">
+                  <a href="/manipulate/buy/up/{{product.id}}/{{key}}" class="btn btn-success">5+</a>
+                  <a href="/manipulate/buy/down/{{product.id}}/{{key}}" class="btn btn-danger">5-</a>
+                </div><br>
+            </div>
+        </div>
+        </div>
+    {% endfor %}
+    </div>
 {% endblock %}
