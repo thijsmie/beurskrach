@@ -1,12 +1,22 @@
 {% extends 'base.html' %}
+{% import 'graph.html' as graphs %}
 
 {% block container %}
-    <div class="jumbotron">
-        <h1>Marieborrel Beurskrach</h1>
-    </div>
-
-    <p class="lead">
-        Do Stuff After You LOGIN
-    </p>
-
+    {{ graphs.start("History") }}
+    {% for product, history in history.items() %}
+        {{ graphs.dataset(history[0], product, history[1]) }}
+    {% endfor %}
+    {{ graphs.stop() }}
+    
+    {{ graphs.start("Volumes") }}
+    {% for product, volume in volumes.items() %}
+        {{ graphs.dataset(volume[0], product, volume[1]) }}
+    {% endfor %}
+    {{ graphs.stop() }}
+    
+    {{ graphs.start("Total_sold") }}
+    {% for product, total in totals.items() %}
+        {{ graphs.dataset(total[0], product, total[1]) }}
+    {% endfor %}
+    {{ graphs.stop() }}
 {% endblock %}

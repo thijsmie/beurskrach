@@ -1,0 +1,73 @@
+{# Very simple graph macro #}
+{% macro linegraph(points, title, label, width, height, colour) %}
+<canvas id="{{ label }}" width="{{ width }}" height="{{ height }}"></canvas>
+<script type="text/javascript">
+    var ctx = document.getElementById("{{ label }}");
+    var {{ label }} = new Chart(ctx, {
+        type: 'line',
+        data: { 
+            datasets: [{
+                type: 'line',
+                label: ["History"],
+                fill: false,
+                borderColor: "{{ colour }}",
+                data: [{% for i in range(points|length) %}{% if i != 0 %},{% endif %} { x:{{ i }}, y:{{ points[i] }} } {% endfor %}]
+            }]
+        },
+        labels: [{% for i in range(points|length) %}{% if i != 0 %},{% endif %}"d{{ i }}"{% endfor %}],
+        options: {
+            responsive: false,
+            title: {
+                display: true,
+                text: '{{ title }}'
+            },
+            scales: {
+            xAxes: [{
+                type: 'linear',
+                position: 'bottom'
+            }]
+        }
+        }
+    });
+</script>
+{% endmacro %}
+
+{% macro start(title) %}
+<canvas id="{{ title }}"></canvas>
+<script type="text/javascript">
+    var ctx = document.getElementById("{{ title }}");
+    var {{ title }} = new Chart(ctx, {
+        type: 'line',
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: '{{ title }}'
+            },
+            scales: {
+                xAxes: [{
+                    type: 'linear',
+                    position: 'bottom'
+                }]
+            }
+        },
+        data: { 
+            datasets: [
+{% endmacro %}
+{% macro stop() %}
+            ]
+        }   
+    });
+</script>
+{% endmacro %}
+
+
+{% macro dataset(points, label, colour) %}
+{
+    type: 'line',
+    label: ["{{ label }}"],
+    fill: false,
+    borderColor: "{{ colour }}",
+    data: [{% for i in range(points|length) %}{% if i != 0 %},{% endif %} { x:{{ i }}, y:{{ points[i] }} } {% endfor %}]
+},
+{% endmacro %}
